@@ -8,7 +8,6 @@ DEFAULT_EXTENSION = ".md"
 
 def main(path_suffix=None):
     notes_dir = get_notes_dir()
-    os.chdir(notes_dir)
 
     if path_suffix:
         f = f"{get_isodate()}-{path_suffix}"
@@ -17,6 +16,8 @@ def main(path_suffix=None):
             path = Path(notes_dir) / (f + DEFAULT_EXTENSION)
         print("path=", path)
         open_file(f)
+    print(notes_dir)
+    return notes_dir
 
 
 if __name__ == "__main__":
