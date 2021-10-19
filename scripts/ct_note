@@ -1,0 +1,29 @@
+#!/usr/bin/python3
+from ct_tools.commons import get_isodate, get_notes_dir, open_file
+import os
+from pathlib import Path
+
+DEFAULT_EXTENSION = ".md"
+
+
+def main(path_suffix=None):
+    notes_dir = get_notes_dir()
+    os.chdir(notes_dir)
+
+    if path_suffix:
+        f = f"{get_isodate()}-{path_suffix}"
+        path = Path(notes_dir) / f
+        if not path.suffix:
+            path = Path(notes_dir) / (f + DEFAULT_EXTENSION)
+        print("path=", path)
+        open_file(f)
+
+
+if __name__ == "__main__":
+    import sys
+
+    pathstuff = None
+    if len(sys.argv) > 1:
+        pathstuff = " ".join(sys.argv[1:])
+
+    main(pathstuff)
