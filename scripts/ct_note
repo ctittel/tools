@@ -1,6 +1,6 @@
 #!/usr/bin/python3
-from ct_tools.commons import get_isodate, get_notes_dir, open_file
-import os
+from ct_tools.commons import get_isodate, get_notes_dir
+from ct_tools.filestuff import open_file, fix_suffix
 from pathlib import Path
 
 DEFAULT_EXTENSION = ".md"
@@ -12,9 +12,7 @@ def main(path_suffix=None):
     if path_suffix:
         f = f"{get_isodate()}-{path_suffix}"
         path = Path(notes_dir) / f
-        if not path.suffix:
-            path = Path(notes_dir) / (f + DEFAULT_EXTENSION)
-        print("path=", path)
+        path = fix_suffix(path, DEFAULT_EXTENSION)
         open_file(f)
     print(notes_dir)
     return notes_dir
