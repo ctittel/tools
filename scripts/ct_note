@@ -2,6 +2,7 @@
 from ct_tools.commons import get_isodate, get_notes_dir
 from ct_tools.filestuff import open_file, fix_suffix
 from pathlib import Path
+import argparse
 
 DEFAULT_EXTENSION = ".md"
 
@@ -20,6 +21,8 @@ def main(path_suffix=None):
 
 if __name__ == "__main__":
     import sys
+    import argparse
+    parser = argparse.ArgumentParser()
 
     pathstuff = None
     if len(sys.argv) > 1:

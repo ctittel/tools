@@ -1,13 +1,26 @@
 # tools
 
-- ct_note:
-    - without params: Jump into notes dir
-    - with params: Create new note with timestamp + param and open it
-- ct_meeting: 
-    - without params: jump into meetings dir 
-    - with params: create directory with current timestamp + param and cd into it
-- ct_summary:
-    - no params: jump into summaries dir
-    - params: Create new file (get fileending from param?)
-- ct_cjd:
-    - johnny decimal cd
+Tools that might be useful for my workflow.
+
+## Quick Notes Tool
+
+For quick notes
+- with params: create a new note in the corresponding dir with {timestamp} + {params} 
+- without params: fzf-search notes directory
+
+## Evergreen Notes Tool
+
+For lasting notes
+- On shutdown: git commit & push changes
+- takes no params
+- enable opening an existing note or creating a new one
+
+## Meetings tool
+
+- Each meeting has its own directory
+- enable searching the directories & creating a new one interactively
+
+## Summary tool
+
+For summaries of texts, videos, etc.
+- enable search existing ones and creating new ones interactively
