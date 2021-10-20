@@ -2,6 +2,12 @@
 
 Tools that might be useful for my workflow.
 
+## TODO
+
+- write the scripts described below
+- combine with ctittel/dotfiles
+- register: automatically git commit & push // sync regularily or on shutdown
+
 ## Quick Notes Tool
 
 For quick notes
