@@ -17,6 +17,10 @@ def debug_print(obj):
 def open_file(path):
     os.system(f"xdg-open {path}")
 
+def create_file():
+    name = input("fzf returned no file. Name of file to create (or open, if it exists): ")
+    os.system(f"touch {name}")
+    open_file(name)
 
 def print_file_matches(query: list, file: str):
     assert isinstance(query, list)
@@ -65,7 +69,10 @@ def main(initial_query: str = ""):
     file = str(file).replace("\n", "")
     file = str(file).replace("\r", "")
 
-    open_file(file)
+    if not file:
+        create_file()
+    else:
+        open_file(file)
     exit()
 
 
