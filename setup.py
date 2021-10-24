@@ -9,6 +9,7 @@ setup(
     extras_require={
     },
     scripts=[
-        'scripts/ct_note'
+        'scripts/ct_note',
+        'scripts/ct-git-sync'
         ]
 )
