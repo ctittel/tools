@@ -4,12 +4,18 @@ import sys
 
 
 TO_ESCAPE = ["'", '"', "*"]
+
+
 def debug_print(obj):
     return
     s = str(obj)
     for c in TO_ESCAPE:
         s = s.replace(c, f'\\{c}')
     os.system(f"echo {s}")
+
+
+def open_file(path):
+    os.system(f"xdg-open {path}")
 
 
 def print_file_matches(query: list, file: str):
@@ -23,61 +29,60 @@ def print_file_matches(query: list, file: str):
     cmd = f"rga --multiline --multiline-dotall --pretty --context 5 {regex_args} {file}"
     debug_print(f"cmd={cmd}")
     os.system(cmd)
+    exit()
 
 
 def file_search(query: list):
-    files = []
     if not query:
-        query = [".*"]
+        query = ["."]
+    search_files = "*"
+    files = []
     for x in query:
-        search_files = " ".join([f'"{f}"' for f in files])
-        out = os.popen(
-            f"rga --multiline --multiline-dotall --files-with-matches {x} {search_files}").read()
+        cmd = f"rga --multiline --multiline-dotall --files-with-matches {x} {search_files}"
+        # debug_print("cmd=",cmd)
+        out = os.popen(cmd).read()
         files = [f for f in out.split("\n") if f]
+        search_files = " ".join([f'"{f}"' for f in files])
     for f in files:
         print(f)
+    exit()
 
 
-def main(initial_query: str):
-    v = f'export FZF_DEFAULT_COMMAND="{__file__} --search {initial_query}" && '
-    v += f'export THIS_SCRIPT={__file__} && '
-    cmd = v + '''
-        fzf --sort --preview="[[ ! -z {} ]] && $THIS_SCRIPT --print {q} {}"
-            --bind "change:reload:$THIS_SCRIPT --search {q}"
-            --phony
-            --preview-window="70%:wrap"
-    '''
+def main(initial_query: str = ""):
+    cmd = f'export THIS_SCRIPT={__file__} && '
+    if initial_query:
+        cmd += f'export FZF_DEFAULT_COMMAND="{__file__} --search \"{initial_query}\"" && '
+    cmd += '''
+                fzf --sort --preview="[[ ! -z {} ]] && $THIS_SCRIPT --print {q} {}"
+                    --bind "change:reload:$THIS_SCRIPT --search {q}"
+                    --phony
+                    --preview-window="70%:wrap"
+            '''
     cmd += f' -q "{initial_query}"'
     cmd = cmd.replace("\n", " ")
+
     file = os.popen(cmd).read()
-    file = str(file).replace("\n","")
-    file = str(file).replace("\r","")
-    print(file)
+    file = str(file).replace("\n", "")
+    file = str(file).replace("\r", "")
+
+    open_file(file)
+    exit()
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        cmd = sys.argv[1]
+    if len(sys.argv) == 1:
+        main()
+    else:
         debug_print(f"THE args = {sys.argv}")
         debug_print(f"LEN args = {len(sys.argv)}")
-        if cmd == "--search":
-            query = ""
-            if len(sys.argv) > 2:
-                query = sys.argv[2]
-            if query:
-                query = query.split()
-            else:
-                query = []
-            file_search(query)
-            exit(None)
-        elif cmd == "--print":
-            file = sys.argv[3]
+        if sys.argv[1] == "--search":
+            assert len(sys.argv) == 3
             query = sys.argv[2].split()
-            if not query:
-                query = []
+            file_search(query)
+        elif sys.argv[1] == "--print":
+            assert len(sys.argv) == 4
+            query = sys.argv[2].split()
+            file = sys.argv[3]
             print_file_matches(query, file)
-            exit(None)
-
-    initial_query = " ".join(sys.argv[1:])
-    main(initial_query)
-    exit(None)
+        else:
+            main(" ".join(sys.argv[1:]))
