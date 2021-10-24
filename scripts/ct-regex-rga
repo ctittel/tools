@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+import sys
+import os
+
+query = None
+queried_files = None
+flags = []
+
+for arg in sys.argv[1:]:
+    if arg[0] == "-":
+        flags.append(arg)
+    else:
+        if query is None:
+            query = arg
+        elif queried_files is None:
+            queried_files = arg
+        else:
+            raise Exception(f"Invalid arguments: {sys.argv}")
+if queried_files is None:
+    queried_files = "*"
+
+query = query.replace(" ", "(?:.*)")
+flags = " ".join(flags)
+cmd = f"rga {flags} \"{query}\" {queried_files}"
+print("COMMAND=",cmd)
+os.system(cmd)
