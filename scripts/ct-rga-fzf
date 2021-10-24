@@ -3,19 +3,32 @@ import os
 import sys
 
 
+TO_ESCAPE = ["'", '"', "*"]
+def debug_print(obj):
+    return
+    s = str(obj)
+    for c in TO_ESCAPE:
+        s = s.replace(c, f'\\{c}')
+    os.system(f"echo {s}")
+
+
 def print_file_matches(query: list, file: str):
+    assert isinstance(query, list)
     if query:
         regex_args = " ".join([f' -e {q} ' for q in query])
     else:
-        regex_args = " -e .* "
-
+        regex_args = ' -e ".*" '
+    debug_print(f"FILE={file} QUERY={query} regex_args = {regex_args}")
     file = f'"{file}"'
     cmd = f"rga --multiline --multiline-dotall --pretty --context 5 {regex_args} {file}"
+    debug_print(f"cmd={cmd}")
     os.system(cmd)
 
 
 def file_search(query: list):
     files = []
+    if not query:
+        query = [".*"]
     for x in query:
         search_files = " ".join([f'"{f}"' for f in files])
         out = os.popen(
@@ -37,17 +50,34 @@ def main(initial_query: str):
     cmd += f' -q "{initial_query}"'
     cmd = cmd.replace("\n", " ")
     file = os.popen(cmd).read()
+    file = str(file).replace("\n","")
+    file = str(file).replace("\r","")
     print(file)
 
 
 if __name__ == "__main__":
-    cmd = sys.argv[1]
-    if cmd == "--search":
-        file_search(sys.argv[2].split())
-    elif cmd == "--print":
-        query = sys.argv[2].split()
-        print_file_matches(query, sys.argv[-1])
-    else:
-        initial_query = " ".join(sys.argv[1:])
-        main(initial_query)
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1]
+        debug_print(f"THE args = {sys.argv}")
+        debug_print(f"LEN args = {len(sys.argv)}")
+        if cmd == "--search":
+            query = ""
+            if len(sys.argv) > 2:
+                query = sys.argv[2]
+            if query:
+                query = query.split()
+            else:
+                query = []
+            file_search(query)
+            exit(None)
+        elif cmd == "--print":
+            file = sys.argv[3]
+            query = sys.argv[2].split()
+            if not query:
+                query = []
+            print_file_matches(query, file)
+            exit(None)
+
+    initial_query = " ".join(sys.argv[1:])
+    main(initial_query)
     exit(None)
