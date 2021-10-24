@@ -1,6 +1,0 @@
-#!/bin/bash
-
-git add -A
-commit_msg="$(date --iso-8601=seconds) -- $(hostname)"
-git commit -m "$commit_msg"
-git push
