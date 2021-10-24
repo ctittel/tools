@@ -1,29 +1,46 @@
 #!/usr/bin/python3
 import os, sys
 
-def make_print_args(query):
-    q = ""
-    for x in query.split():
-        q += " -e " + x + " "
-    if not q:
-        q = " -e .* "
-    return q
+def print_file_matches(query: list, file: str):
+    if query:
+        regex_args = " ".join([f' -e {q} ' for q in query])
+    else:
+        regex_args = " -e .* "
 
-def do_regex_search(query):
+    file = f'"{file}"'
+    cmd = f"rga --multiline --multiline-dotall --pretty --context 5 {regex_args} {file}"
+    os.system(cmd)
+
+def file_search(query: list):
     files = []
-    for x in query.split():
-        search_files = " ".join(["\"" + f + "\"" for f in files])
+    for x in query:
+        search_files = " ".join([f'"{f}"' for f in files])
         out = os.popen(f"rga --multiline --multiline-dotall --files-with-matches {x} {search_files}").read()
         files = [f for f in out.split("\n") if f]
-    return files
+    for f in files:
+        print(f)
+
+def main(initial_query: str):
+    v = f'FZF_DEFAULT_COMMAND="ct-rga-helper --search {initial_query}"'
+    cmd = v + '''
+        fzf --sort --preview="[[ ! -z {} ]] && ct-rga-helper --print {q} {}"
+            --phony
+            --bind "change:reload:ct-rga-helper --search {q}"
+            --preview-window="70%:wrap"
+    '''
+    cmd += f' -q "{initial_query}"'
+    cmd = cmd.replace("\n", " ")
+    file = os.popen(cmd).read()
+    print(file)
 
 if __name__ == "__main__":
     cmd = sys.argv[1]
-    query = sys.argv[2]
-    if cmd == "make_print_args":
-        print(make_print_args(query))
-    elif cmd == "do_regex_search":
-        results = do_regex_search(query)
-        for x in results:
-            print(x)
+    if cmd == "--search":
+        file_search(sys.argv[2].split())
+    elif cmd == "--print":
+        query = sys.argv[2].split()
+        print_file_matches(query, sys.argv[-1])
+    else:
+        initial_query = " ".join(sys.argv[1:])
+        main(initial_query)
     exit(None)
