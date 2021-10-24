@@ -11,6 +11,6 @@ setup(
     scripts=[
         'scripts/ct-note',
         'scripts/ct-git-sync',
-        'scripts/ct-rga-fzf',
+        'scripts/ct-rga-fzf'
         ]
 )

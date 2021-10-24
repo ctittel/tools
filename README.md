@@ -4,13 +4,11 @@ Tools that might be useful for my workflow.
 
 ## TODO
 
-- write the scripts described below
-- combine with ctittel/dotfiles
 - register: automatically git commit & push // sync regularily or on shutdown
 
-## Git-Sync
-
-
+## Tools
+- `ct-git-sync`: Commits all files in the current directory and attempts to push to origin
+- `ct-rga-fzf`: Fuzzy fulltext search in the current directory and subdirectory; selected file will be opened
 
 ## Quick Notes Tool
 
