@@ -8,6 +8,10 @@ Tools that might be useful for my workflow.
 - combine with ctittel/dotfiles
 - register: automatically git commit & push // sync regularily or on shutdown
 
+## Git-Sync
+
+
+
 ## Quick Notes Tool
 
 For quick notes

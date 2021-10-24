@@ -1,0 +1,6 @@
+#!/bin/bash
+
+git add -A
+commit_msg="$(hostname) -- $(date)"
+git commit -m "$commit_msg"
+git push
