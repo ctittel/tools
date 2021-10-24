@@ -1,14 +1,12 @@
 #!/bin/bash
 
-RG_PREFIX="rga --files-with-matches --multiline --multiline-dotall"
-
-RGA_FLAGS="--multiline --multiline-dotall"
+RGA_BASE="rga --multiline --multiline-dotall"
 
 file="$(
-    FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
-        fzf --sort --preview="[[ ! -z {} ]] && rga $RGA_FLAGS --pretty --context 5 \$(ct-make-regex {q}) {}" \
+    FZF_DEFAULT_COMMAND="$RGA_BASE --files-with-matches $(ct-rga-helper make_search_args '$1')" \
+        fzf --sort --preview="[[ ! -z {} ]] && $RGA_BASE --pretty --context 5 \$(ct-rga-helper make_print_args {q} ) {}" \
             --phony -q "$1" \
-            --bind "change:reload:$RG_PREFIX \$(ct-make-regex {q})" \
+            --bind "change:reload:$RGA_BASE --files-with-matches \$(ct-rga-helper make_search_args {q})" \
             --preview-window="70%:wrap"
 )" &&
 echo "opening $file" &&
