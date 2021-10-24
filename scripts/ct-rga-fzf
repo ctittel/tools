@@ -3,10 +3,10 @@
 RGA_BASE="rga --multiline --multiline-dotall"
 
 file="$(
-    FZF_DEFAULT_COMMAND="$RGA_BASE --files-with-matches $(ct-rga-helper make_search_args '$1')" \
+    FZF_DEFAULT_COMMAND="ct-rga-helper do_regex_search $1" \
         fzf --sort --preview="[[ ! -z {} ]] && $RGA_BASE --pretty --context 5 \$(ct-rga-helper make_print_args {q} ) {}" \
             --phony -q "$1" \
-            --bind "change:reload:$RGA_BASE --files-with-matches \$(ct-rga-helper make_search_args {q})" \
+            --bind "change:reload:ct-rga-helper do_regex_search {q}" \
             --preview-window="70%:wrap"
 )" &&
 echo "opening $file" &&

@@ -1,9 +1,6 @@
 #!/usr/bin/python3
 import os, sys
 
-def make_search_args(query):
-    return query.replace(" ", ".*")
-
 def make_print_args(query):
     q = ""
     for x in query.split():
@@ -23,11 +20,10 @@ def do_regex_search(query):
 if __name__ == "__main__":
     cmd = sys.argv[1]
     query = sys.argv[2]
-    if cmd == "make_search_args":
-        print(make_search_args(query))
-    elif cmd == "make_print_args":
+    if cmd == "make_print_args":
         print(make_print_args(query))
     elif cmd == "do_regex_search":
         results = do_regex_search(query)
         for x in results:
             print(x)
+    exit(None)
