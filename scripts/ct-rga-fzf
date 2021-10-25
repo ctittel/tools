@@ -15,7 +15,7 @@ def debug_print(obj):
 
 
 def open_file(path):
-    os.system(f"xdg-open {path}")
+    os.system(f'xdg-open "{path}"')
 
 def create_file():
     name = input("fzf returned no file. Name of file to create (or open, if it exists): ")
@@ -30,7 +30,7 @@ def print_file_matches(query: list, file: str):
         regex_args = ' -e ".*" '
     debug_print(f"FILE={file} QUERY={query} regex_args = {regex_args}")
     file = f'"{file}"'
-    cmd = f"rga --multiline --multiline-dotall --pretty --context 5 {regex_args} {file}"
+    cmd = f"rga --multiline --multiline-dotall --with-filename --pretty --context 5 {regex_args} {file}"
     debug_print(f"cmd={cmd}")
     os.system(cmd)
     exit()
