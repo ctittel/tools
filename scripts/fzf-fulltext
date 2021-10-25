@@ -1,14 +1,17 @@
 #!/usr/bin/python3
 import os
 
+MULTILINE_ARGS = " --multiline --multiline-dotall "
+
+
 def print_file_matches(query: list, file: str):
     assert isinstance(query, list)
-    if query:
-        regex_args = " ".join([f' -e {q} ' for q in query])
-    else:
-        regex_args = ' -e ".*" '
+    if not query:
+        query = [".*"]
+    regex_args = " ".join([f' -e "{q}" ' for q in query])
     file = f'"{file}"'
-    cmd = f"rga --multiline --multiline-dotall --with-filename --pretty --context 5 {regex_args} {file}"
+
+    cmd = f"rga --with-filename --pretty --context 5 {MULTILINE_ARGS} {regex_args} {file}"
     os.system(cmd)
 
 
@@ -17,8 +20,9 @@ def file_search(query: list):
         query = ["."]
     search_files = "*"
     files = []
+
     for x in query:
-        cmd = f"rga --multiline --multiline-dotall --files-with-matches {x} {search_files}"
+        cmd = f"rga {MULTILINE_ARGS} --files-with-matches {x} {search_files}"
         out = os.popen(cmd).read()
         files = [f for f in out.split("\n") if f]
         search_files = " ".join([f'"{f}"' for f in files])
@@ -26,8 +30,10 @@ def file_search(query: list):
         print(f)
 
 
-def main():
-    cmd = f'export THIS_SCRIPT={__file__} && '
+def main(multiline=True):
+    ml = "" if multiline else " --no-multiline "
+
+    cmd = f'export THIS_SCRIPT="{__file__} {ml}" && '
     cmd += '''
                 fzf --sort --preview="[[ ! -z {} ]] && $THIS_SCRIPT --print {q} {}"
                     --bind "change:reload:$THIS_SCRIPT --search {q}"
@@ -44,10 +50,6 @@ def main():
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--no-multiline',
-                        dest='multiline',
-                        default=True,
-                        action='store_false')
     parser.add_argument('--search',
                         dest="search_query",
                         default=None,
