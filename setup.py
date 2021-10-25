@@ -9,6 +9,6 @@ setup(
     extras_require={
     },
     scripts=[
-        'scripts/ct-rga-fzf'
+        'scripts/fzf-fulltext'
         ]
 )

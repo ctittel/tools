@@ -2,7 +2,6 @@
 import os
 import sys
 
-
 TO_ESCAPE = ["'", '"', "*"]
 
 
@@ -12,15 +11,6 @@ def debug_print(obj):
     for c in TO_ESCAPE:
         s = s.replace(c, f'\\{c}')
     os.system(f"echo {s}")
-
-
-def open_file(path):
-    os.system(f'xdg-open "{path}"')
-
-def create_file():
-    name = input("fzf returned no file. Name of file to create (or open, if it exists): ")
-    os.system(f"touch {name}")
-    open_file(name)
 
 def print_file_matches(query: list, file: str):
     assert isinstance(query, list)
@@ -68,13 +58,6 @@ def main(initial_query: str = ""):
     file = os.popen(cmd).read()
     file = str(file).replace("\n", "")
     file = str(file).replace("\r", "")
-
-    if not file:
-        create_file()
-    else:
-        open_file(file)
-    exit()
-
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
