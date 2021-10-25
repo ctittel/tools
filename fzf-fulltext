@@ -30,30 +30,32 @@ def file_search(query: list):
         print(f)
 
 
-def main(multiline=True):
-    ml = "" if multiline else " --no-multiline "
-
-    cmd = f'export THIS_SCRIPT="{__file__} {ml}" && '
+def main(multiselect=True):
+    cmd = f'export THIS_SCRIPT="{__file__}" && '
     cmd += '''
                 fzf --sort --preview="[[ ! -z {} ]] && $THIS_SCRIPT --print {q} {}"
                     --bind "change:reload:$THIS_SCRIPT --search {q}"
                     --phony
                     --preview-window="70%:wrap"
             '''
+    if multiselect:
+        cmd += " -m "
     cmd = cmd.replace("\n", " ")
-
-    file = os.popen(cmd).read()
-    file = str(file).replace("\n", "")
-    file = str(file).replace("\r", "")
+    os.system(cmd)
 
 
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--multi',
+                        default=False,
+                        action='store_true',
+                        help="Enable fzf multi-select with tab/shift-tab")
     parser.add_argument('--search',
                         dest="search_query",
                         default=None,
-                        type=str)
+                        type=str,
+                        nargs="+")
     parser.add_argument('--print',
                         dest="print_query",
                         default=None,
@@ -67,7 +69,9 @@ if __name__ == "__main__":
         print_file_matches(query.split(), file)
     elif args.search_query:
         assert args.print_query is None
-        file_search(args.search_query.split())
+        query = args.search_query
+        query = sum([x.split() for x in query], [])
+        file_search(query)
     else:
-        main()
+        main(args.multi)
     exit()

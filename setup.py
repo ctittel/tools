@@ -9,6 +9,6 @@ setup(
     extras_require={
     },
     scripts=[
-        'scripts/fzf-fulltext'
+        'fzf-fulltext'
         ]
 )
