@@ -1,16 +1,5 @@
 #!/usr/bin/python3
 import os
-import sys
-
-TO_ESCAPE = ["'", '"', "*"]
-
-
-def debug_print(obj):
-    return
-    s = str(obj)
-    for c in TO_ESCAPE:
-        s = s.replace(c, f'\\{c}')
-    os.system(f"echo {s}")
 
 def print_file_matches(query: list, file: str):
     assert isinstance(query, list)
@@ -18,12 +7,9 @@ def print_file_matches(query: list, file: str):
         regex_args = " ".join([f' -e {q} ' for q in query])
     else:
         regex_args = ' -e ".*" '
-    debug_print(f"FILE={file} QUERY={query} regex_args = {regex_args}")
     file = f'"{file}"'
     cmd = f"rga --multiline --multiline-dotall --with-filename --pretty --context 5 {regex_args} {file}"
-    debug_print(f"cmd={cmd}")
     os.system(cmd)
-    exit()
 
 
 def file_search(query: list):
@@ -33,46 +19,53 @@ def file_search(query: list):
     files = []
     for x in query:
         cmd = f"rga --multiline --multiline-dotall --files-with-matches {x} {search_files}"
-        # debug_print("cmd=",cmd)
         out = os.popen(cmd).read()
         files = [f for f in out.split("\n") if f]
         search_files = " ".join([f'"{f}"' for f in files])
     for f in files:
         print(f)
-    exit()
 
 
-def main(initial_query: str = ""):
+def main():
     cmd = f'export THIS_SCRIPT={__file__} && '
-    if initial_query:
-        cmd += f'export FZF_DEFAULT_COMMAND="{__file__} --search \\"{initial_query}\\"" && '
     cmd += '''
                 fzf --sort --preview="[[ ! -z {} ]] && $THIS_SCRIPT --print {q} {}"
                     --bind "change:reload:$THIS_SCRIPT --search {q}"
                     --phony
                     --preview-window="70%:wrap"
             '''
-    cmd += f' -q "{initial_query}"'
     cmd = cmd.replace("\n", " ")
 
     file = os.popen(cmd).read()
     file = str(file).replace("\n", "")
     file = str(file).replace("\r", "")
 
+
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        main()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--no-multiline',
+                        dest='multiline',
+                        default=True,
+                        action='store_false')
+    parser.add_argument('--search',
+                        dest="search_query",
+                        default=None,
+                        type=str)
+    parser.add_argument('--print',
+                        dest="print_query",
+                        default=None,
+                        type=str,
+                        nargs=2)
+    args = parser.parse_args()
+
+    if args.print_query:
+        assert args.search_query is None
+        query, file = args.print_query
+        print_file_matches(query.split(), file)
+    elif args.search_query:
+        assert args.print_query is None
+        file_search(args.search_query.split())
     else:
-        debug_print(f"THE args = {sys.argv}")
-        debug_print(f"LEN args = {len(sys.argv)}")
-        if sys.argv[1] == "--search":
-            assert len(sys.argv) == 3
-            query = sys.argv[2].split()
-            file_search(query)
-        elif sys.argv[1] == "--print":
-            assert len(sys.argv) == 4
-            query = sys.argv[2].split()
-            file = sys.argv[3]
-            print_file_matches(query, file)
-        else:
-            main(" ".join(sys.argv[1:]))
+        main()
+    exit()
