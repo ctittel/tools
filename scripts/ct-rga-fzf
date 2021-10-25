@@ -55,7 +55,7 @@ def file_search(query: list):
 def main(initial_query: str = ""):
     cmd = f'export THIS_SCRIPT={__file__} && '
     if initial_query:
-        cmd += f'export FZF_DEFAULT_COMMAND="{__file__} --search \"{initial_query}\"" && '
+        cmd += f'export FZF_DEFAULT_COMMAND="{__file__} --search \\"{initial_query}\\"" && '
     cmd += '''
                 fzf --sort --preview="[[ ! -z {} ]] && $THIS_SCRIPT --print {q} {}"
                     --bind "change:reload:$THIS_SCRIPT --search {q}"
