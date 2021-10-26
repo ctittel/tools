@@ -9,8 +9,7 @@ setup(
     extras_require={
     },
     scripts=[
-        'fzf-fulltext',
         'cttest',
-        'fzf-fulltext2'
+        'fzf-fulltext'
         ]
 )
