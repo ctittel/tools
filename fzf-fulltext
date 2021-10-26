@@ -46,6 +46,6 @@ export FZF_DEFAULT_COMMAND="my-file-search"
 fzf --sort --preview="[[ ! -z {} ]] && my-rga-prettyprint {q} {}" \
     --bind "change:reload:my-file-search {q}" \
     --phony \
-    -q '' \
-    --preview-window="70%:wrap" \
     $@
+
+# All args to "fzf-fulltext" are directly passed onwards to fzf
