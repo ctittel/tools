@@ -4,17 +4,26 @@ prepare_prettyprint_query() {
     # echo "INPUT = " $@
     # echo
     # echo \"$@\" |
-    echo $@ | sed 's/ /" -e "/g' | sed 's_^_-e _g'
+    # echo $@ | sed 's/ /" -e "/g' | sed 's_^_-e _g'
     # echo tools
+    for query in $@; do
+        echo "-e $query "
+    done
+
 }
 
 rga-prettyprint() {
-    query="$(prepare_prettyprint_query $1)"
+    # echo "args=$@"
+    # echo "arg1=$1"
+    # echo "arg2=$2"
+    QUERY="$(prepare_prettyprint_query $1)"
+    # echo "QUERY=$QUERY"
+    # exit
     # echo "$query"
     rga --with-filename \
         --pretty --context 5 \
         --multiline --multiline-dotall \
-        $query $2
+        $QUERY "$2"
 }
 
 file_search() {
@@ -26,4 +35,5 @@ file_search() {
     echo "$FILES"
 }
 
-file_search "$@"
+# file_search "$@"
+rga-prettyprint "$@"
