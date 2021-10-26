@@ -29,8 +29,21 @@ def file_search(query: list):
     for f in files:
         print(f)
 
-
 def main(multiselect=True):
+    cmd = f'export THIS_SCRIPT="{__file__}" && '
+    cmd += "export SED_STUFF=\"sed -e 's/ /\" -e \"/g' | sed -e 's/^/-e /g'\" && "
+    cmd += '''
+                fzf --sort --preview="[[ ! -z {} ]] && echo {q} | $$SED_STUFF {}"
+                    --bind "change:reload:$THIS_SCRIPT --search {q}"
+                    --phony
+                    --preview-window="70%:wrap"
+            '''
+    if multiselect:
+        cmd += " -m "
+    cmd = cmd.replace("\n", " ")
+    os.system(cmd)
+
+def old_main(multiselect=True):
     cmd = f'export THIS_SCRIPT="{__file__}" && '
     cmd += '''
                 fzf --sort --preview="[[ ! -z {} ]] && $THIS_SCRIPT --print {q} {}"

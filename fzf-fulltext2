@@ -1,0 +1,29 @@
+#!/bin/bash
+
+prepare_prettyprint_query() {
+    # echo "INPUT = " $@
+    # echo
+    # echo \"$@\" |
+    echo $@ | sed 's/ /" -e "/g' | sed 's_^_-e _g'
+    # echo tools
+}
+
+rga-prettyprint() {
+    query="$(prepare_prettyprint_query $1)"
+    # echo "$query"
+    rga --with-filename \
+        --pretty --context 5 \
+        --multiline --multiline-dotall \
+        $query $2
+}
+
+file_search() {
+    FILES="$(echo .)"
+    for QUERY in $@; do
+        # x=$(echo "$FILES" | xargs -d $'\n' cttest $QUERY)
+        FILES=$(echo "$FILES" | xargs -d $'\n' rga -L --multiline --multiline-dotall --files-with-matches $QUERY)
+    done
+    echo "$FILES"
+}
+
+file_search "$@"
